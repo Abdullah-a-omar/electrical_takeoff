@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق مهندس الكهرباء - حصر المستلزمات</title>
+    <!-- Bootstrap 5 RTL CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    
+    
+    <!-- ربط ملف الـ Manifest -->
+    {% comment %} <link rel="manifest" href="/static/manifest.json"> {% endcomment %}
+    <link rel="stylesheet" href="{% static 'manifest.json' %}">
+
+    <!-- تهيئة متصفح الهاتف -->
+    <meta name="theme-color" content="#0d6efd">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="حصر الكهرباء">
+</head>
+<body>
+
+    <!-- Header -->
+    <nav class="navbar navbar-dark bg-primary sticky-top shadow-sm">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">
+                <i class="bi bi-lightning-charge-fill me-1"></i> حصر مستلزمات الكهرباء
+            </span>
+            <button class="btn btn-outline-light btn-sm" onclick="resetAll()">
+                <i class="bi bi-arrow-counterclockwise"></i> تفريغ
+            </button>
+        </div>
+    </nav>
+
+    <div class="container my-3">
+        
+        <!-- كارت بيانات الطلب والتشغيل السريع -->
+        <div class="card main-card p-3 mb-3">
+            <div class="row g-2">
+                <div class="col-12 col-md-6">
+                    <label class="form-label text-muted small fw-bold">اسم الموقع / الشقة / العميل</label>
+                    <input type="text" id="siteName" class="form-control" placeholder="مثال: شقة المهندس عبد الله - العمارة 5">
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label text-muted small fw-bold">رقم هاتف العميل (اختياري)</label>
+                    <input type="tel" id="supplierPhone" class="form-control" placeholder="0123456789">
+                </div>
+            </div>
+            <div class="mt-3">
+                <button class="btn btn-warning btn-sm w-100 fw-bold" onclick="loadDefaultTemplate()">
+                    <i class="bi bi-magic me-1"></i> تعبئة نموذج شقة جديدة قياسي (المقادير الافتراضية)
+                </button>
+            </div>
+        </div>
+
+        <!-- الأقسام الثلاثة الرئيسيّة -->
+        <div class="accordion" id="electricalAccordion">
+
+            <!-- المرحلة الأولى: التأسيس -->
+            <div class="accordion-item category-card">
+                <h2 class="accordion-header">
+                    <button class="accordion-button category-header" type="button" data-bs-toggle="collapse" data-bs-target="#phase1">
+                        <i class="bi bi-bricks me-2 text-primary"></i> 1. مرحلة مواد التأسيس (الحوائط)
+                    </button>
+                </h2>
+                <div id="phase1" class="accordion-collapse collapse show" data-bs-parent="#electricalAccordion">
+                    <div class="accordion-body p-2" id="phase1-container">
+                        <!-- يتم إدراج المنتجات هنا تلقائياً بواسطة JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- المرحلة الثانية: وضع الأسلاك -->
+            <div class="accordion-item category-card">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed category-header" type="button" data-bs-toggle="collapse" data-bs-target="#phase2">
+                        <i class="bi bi-diagram-3 me-2 text-warning"></i> 2. مرحلة وضع الأسلاك والطبلون
+                    </button>
+                </h2>
+                <div id="phase2" class="accordion-collapse collapse" data-bs-parent="#electricalAccordion">
+                    <div class="accordion-body p-2" id="phase2-container">
+                        <!-- يتم إدراج المنتجات هنا تلقائياً بواسطة JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- المرحلة الثالثة: التشطيب -->
+            <div class="accordion-item category-card">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed category-header" type="button" data-bs-toggle="collapse" data-bs-target="#phase3">
+                        <i class="bi bi-lightbulb me-2 text-success"></i> 3. مرحلة تركيب اللمبات والتشطيب
+                    </button>
+                </h2>
+                <div id="phase3" class="accordion-collapse collapse" data-bs-parent="#electricalAccordion">
+                    <div class="accordion-body p-2" id="phase3-container">
+                        <!-- يتم إدراج المنتجات هنا تلقائياً بواسطة JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- زر إضافة صنف جديد مخصص -->
+        <div class="my-3 text-center">
+            <button type='button' class="btn btn-outline-primary btn-sm w-100 py-2 fw-bold" onclick="addCustomItemPrompt('phase1-container')">
+                <i class="bi bi-plus-circle me-1"></i> إضافة عنصر مخصص غير موجود بالقائمة
+            </button>
+        </div>
+
+    </div>
+
+    <!-- الشريط السفلي المثبت -->
+    <div class="sticky-bottom-bar d-flex justify-content-between align-items-center">
+        <div>
+            <div class="text-muted small">إجمالي القطع المختارة:</div>
+            <div class="fw-bold fs-5 text-primary" id="totalItemsCount">0 قطعة</div>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary" onclick="copyMessageText()" title="نسخ النص">
+                <i class="bi bi-clipboard"></i>
+            </button>
+            <button class="btn btn-success fw-bold d-flex align-items-center gap-2" onclick="previewAndShare()">
+                <i class="bi bi-whatsapp"></i> مشاركة القائمة
+            </button>
+        </div>
+    </div>
+
+    <!-- نافذة معاينة النص والمشاركة (Modal) -->
+    <div class="modal fade" id="previewModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fs-6 fw-bold">معاينة التقرير النهائي</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea id="messagePreviewText" class="form-control" rows="10" readonly></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">إغلاق</button>
+                    <button type="button" class="btn btn-success btn-sm" onclick="sendToWhatsApp()">
+                        <i class="bi bi-whatsapp me-1"></i> إرسال عبر واتساب
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>
